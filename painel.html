@@ -4,150 +4,30 @@
     <meta charset="UTF-8">
     <title>Painel Central - Base de Dados & Pedidos</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-        }
-        body {
-            background: #f4f6f9;
-            padding: 20px;
-            color: #333;
-            display: flex;
-            gap: 20px;
-        }
-        .column {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .col-left {
-            flex: 1.2;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .col-right {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        h2 {
-            color: #264c33;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #ffbc0d;
-            padding-bottom: 5px;
-        }
-        .tax-badge {
-            background: #dc3545;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-left: 5px;
-        }
-        .method-badge {
-            background: #007bc4;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-left: 5px;
-        }
-        .method-badge.card {
-            background: #28a745;
-        }
-        .order-card {
-            background: #fff;
-            border-left: 6px solid #ffbc0d;
-            border: 1px solid #ddd;
-            border-left-width: 6px;
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .order-card.ready {
-            border-left-color: #28a745;
-            background-color: #f8fff9;
-        }
-        .order-details {
-            font-size: 0.95rem;
-        }
-        .order-number {
-            font-weight: bold;
-            color: #264c33;
-            font-size: 1.1rem;
-        }
-        .order-items {
-            color: #555;
-            margin: 4px 0;
-            font-style: italic;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-            font-size: 0.9rem;
-        }
-        th {
-            background: #264c33;
-            color: white;
-        }
-        input, select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 5px;
-        }
-        button {
-            background: #ffbc0d;
-            border: none;
-            padding: 8px 12px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: 0.1s;
-        }
-        button:active {
-            transform: scale(0.96);
-        }
-        button.delete {
-            background: #dc3545;
-            color: white;
-        }
-        button.ready-btn {
-            background: #28a745;
-            color: white;
-        }
-        button.clear-btn {
-            background: #6c757d;
-            color: white;
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-        }
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: #f4f6f9; padding: 20px; color: #333; display: flex; gap: 20px; }
+        .column { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .col-left { flex: 1.2; display: flex; flex-direction: column; gap: 15px; }
+        .col-right { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        h2 { color: #264c33; margin-bottom: 15px; border-bottom: 2px solid #ffbc0d; padding-bottom: 5px; }
+        .tax-badge { background: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-left: 5px; }
+        .method-badge { background: #007bc4; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-left: 5px; }
+        .method-badge.card { background: #28a745; }
+        .order-card { background: #fff; border-left: 6px solid #ffbc0d; border: 1px solid #ddd; border-left-width: 6px; border-radius: 6px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .order-card.ready { border-left-color: #28a745; background-color: #f8fff9; }
+        .order-details { font-size: 0.95rem; }
+        .order-number { font-weight: bold; color: #264c33; font-size: 1.1rem; }
+        .order-items { color: #555; margin: 4px 0; font-style: italic; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 0.9rem; }
+        th { background: #264c33; color: white; }
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-right: 5px; }
+        button { background: #ffbc0d; border: none; padding: 8px 12px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.1s; }
+        button:active { transform: scale(0.96); }
+        button.delete { background: #dc3545; color: white; }
+        button.ready-btn { background: #28a745; color: white; }
+        button.clear-btn { background: #6c757d; color: white; width: 100%; padding: 10px; margin-top: 5px; }
+        .checkbox-container { display: flex; align-items: center; gap: 5px; font-size: 0.9rem; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -282,3 +162,36 @@
 
             menu.push({
                 id: Date.now(),
+                name: document.getElementById('pName').value,
+                price: parseFloat(document.getElementById('pPrice').value),
+                icon: document.getElementById('pIcon').value,
+                category: category,
+                hasTax: finalTax
+            });
+
+            localStorage.setItem('kiosk_menu', JSON.stringify(menu));
+            localStorage.setItem('kiosk_update_trigger', Date.now());
+            renderAll();
+            this.reset();
+            document.getElementById('pHasTax').disabled = false;
+            checkCategoryTax();
+        });
+
+        function deleteItem(index) {
+            const menu = getMenu();
+            menu.splice(index, 1);
+            localStorage.setItem('kiosk_menu', JSON.stringify(menu));
+            localStorage.setItem('kiosk_update_trigger', Date.now());
+            renderAll();
+        }
+
+        function markAsReady(orderId) {
+            let orders = getOrders();
+            orders = orders.map(o => o.id == orderId ? { ...o, status: 'Pronto' } : o);
+            localStorage.setItem('kiosk_orders', JSON.stringify(orders));
+            localStorage.setItem('kiosk_order_trigger', Date.now());
+            renderAll();
+        }
+
+        function clearHistory() {
+            let orders = getOrders();
