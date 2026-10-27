@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>McDonald's - Kiosk de Pedidos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+            padding-bottom: 100px;
+        }
+
+        header {
+            background-color: #bd0017;
+            color: #ffbc0d;
+            text-align: center;
+            padding: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            margin: 5px 0 0 0;
+            color: #fff;
+            font-style: italic;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image-placeholder {
+            background-color: #ffbc0d;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #bd0017;
+            font-size: 1.2em;
+        }
+
+        .product-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .product-info h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.4em;
+            color: #bd0017;
+        }
+
+        .product-info p {
+            margin: 0 0 15px 0;
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+            height: 40px;
+        }
+
+        .btn-order {
+            display: inline-block;
+            background-color: #ffbc0d;
+            color: #bd0017;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .btn-order:hover {
+            background-color: #e5a80b;
+        }
+
+        /* Barra Inferior Fixa do Carrinho */
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #333;
+            color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .btn-checkout {
+            background-color: #ffbc0d;
+            color: #bd0017;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .btn-checkout:hover {
+            background-color: #e5a80b;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>McDonald's Kiosk</h1>
+        <p>Faça o seu pedido aqui</p>
+    </header>
+
+    <div class="container">
+        <div class="menu-grid">
+            
+            <div class="product-card">
+                <div class="product-image-placeholder">🍔 Big Mac</div>
+                <div class="product-info">
+                    <h2>Big Mac</h2>
+                    <p>Dois hambúrgueres de carne de vaca, alface, queijo, pepino, cebola e o molho secreto.</p>
+                    <button class="btn-order" onclick="adicionarAoCarrinho('Big Mac')">Adicionar</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image-placeholder">🍗 McChicken</div>
+                <div class="product-info">
+                    <h2>McChicken</h2>
+                    <p>Frango panado crocante com alface picada e delicioso molho de maionese.</p>
+                    <button class="btn-order" onclick="adicionarAoCarrinho('McChicken')">Adicionar</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image-placeholder">🍟 Batatas Fritas</div>
+                <div class="product-info">
+                    <h2>Batatas Fritas</h2>
+                    <p>As nossas famosas batatas fritas, douradas e estaladiças por fora.</p>
+                    <button class="btn-order" onclick="adicionarAoCarrinho('Batatas Fritas')">Adicionar</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image-placeholder">🍦 Sundae</div>
+                <div class="product-info">
+                    <h2>Sundae Chocolate</h2>
+                    <p>Gelado de baunilha cremoso coberto com uma luxuosa calda quente de chocolate.</p>
+                    <button class="btn-order" onclick="adicionarAoCarrinho('Sundae')">Adicionar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Barra do Carrinho -->
+    <div class="cart-bar">
+        <div>
+            <span id="cart-count">Carrinho: 0 itens</span>
+            <div id="cart-items-list" style="font-size: 0.8em; color: #ccc; margin-top: 5px;"></div>
+        </div>
+        <button class="btn-checkout" onclick="finalizarPedido()">Enviar para a Cozinha</button>
+    </div>
+
+    <script>
+        let carrinho = [];
+
+        function adicionarAoCarrinho(nomeProduto) {
+            carrinho.push(nomeProduto);
+            atualizarInterfaceCarrinho();
+        }
+
+        function atualizarInterfaceCarrinho() {
+            document.getElementById('cart-count').innerText = `Carrinho: ${carrinho.length} item(ns)`;
+            document.getElementById('cart-items-list').innerText = carrinho.join(', ');
+        }
+
+        function finalizarPedido() {
+            if (carrinho.length === 0) {
+                alert("O seu carrinho está vazio!");
+                return;
+            }
+
+            // Cria um objeto de pedido com ID único baseado no timestamp
+            const novoPedido = {
+                id: Math.floor(Math.random() * 900) + 100, // Número de pedido simples (ex: 142)
+                itens: [...carrinho],
+                hora: new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            // Vai buscar os pedidos já existentes no localStorage ou cria uma lista vazia
+            let pedidosExistentes = JSON.parse(localStorage.getItem('pedidosCozinha')) || [];
+            pedidosExistentes.push(novoPedido);
+
+            // Grava a lista atualizada no localStorage
+            localStorage.setItem('pedidosCozinha', JSON.stringify(pedidosExistentes));
+
+            alert(`Pedido #${novoPedido.id} enviado com sucesso para a cozinha!`);
+            
+            // Limpa o carrinho
+            carrinho = [];
+            atualizarInterfaceCarrinho();
+        }
+    </script>
+</body>
+</html>
