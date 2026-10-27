@@ -4,30 +4,140 @@
     <meta charset="UTF-8">
     <title>Painel Central - Base de Dados & Pedidos</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: #f4f6f9; padding: 20px; color: #333; display: flex; gap: 20px; }
-        .column { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .col-left { flex: 1.2; }
-        .col-right { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        h2 { color: #264c33; margin-bottom: 15px; border-bottom: 2px solid #ffbc0d; padding-bottom: 5px; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        body {
+            background: #f4f6f9;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            gap: 20px;
+        }
+        .column {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .col-left {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .col-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        h2 {
+            color: #264c33;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ffbc0d;
+            padding-bottom: 5px;
+        }
+        .tax-badge {
+            background: #dc3545;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 5px;
+        }
         /* Secção de Pedidos (Estilo Cozinha/KDS) */
-        .order-card { background: #fff; border-left: 6px solid #ffbc0d; border: 1px solid #ddd; border-left-width: 6px; border-radius: 6px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .order-card.ready { border-left-color: #28a745; background-color: #f8fff9; }
-        .order-details { font-size: 0.95rem; }
-        .order-number { font-weight: bold; color: #264c33; font-size: 1.1rem; }
-        .order-items { color: #555; margin: 4px 0; font-style: italic; }
-        
+        .order-card {
+            background: #fff;
+            border-left: 6px solid #ffbc0d;
+            border: 1px solid #ddd;
+            border-left-width: 6px;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-card.ready {
+            border-left-color: #28a745;
+            background-color: #f8fff9;
+        }
+        .order-details {
+            font-size: 0.95rem;
+        }
+        .order-number {
+            font-weight: bold;
+            color: #264c33;
+            font-size: 1.1rem;
+        }
+        .order-items {
+            color: #555;
+            margin: 4px 0;
+            font-style: italic;
+        }
         /* Tabelas e Form */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 0.9rem; }
-        th { background: #264c33; color: white; }
-        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-right: 5px; }
-        button { background: #ffbc0d; border: none; padding: 8px 12px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.1s; }
-        button:active { transform: scale(0.96); }
-        button.delete { background: #dc3545; color: white; }
-        button.ready-btn { background: #28a745; color: white; }
-        button.clear-btn { background: #6c757d; color: white; width: 100%; padding: 10px; margin-top: 5px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        th {
+            background: #264c33;
+            color: white;
+        }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        button {
+            background: #ffbc0d;
+            border: none;
+            padding: 8px 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.1s;
+        }
+        button:active {
+            transform: scale(0.96);
+        }
+        button.delete {
+            background: #dc3545;
+            color: white;
+        }
+        button.ready-btn {
+            background: #28a745;
+            color: white;
+        }
+        button.clear-btn {
+            background: #6c757d;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            margin-top: 4px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -47,17 +157,26 @@
             <h2>🍔 Adicionar Produto ao Menu</h2>
             <form id="productForm" style="display: flex; flex-direction: column; gap: 8px;">
                 <input type="text" id="pName" placeholder="Nome do Produto" required>
+                
                 <div style="display: flex; gap: 5px;">
                     <input type="number" id="pPrice" step="0.01" placeholder="Preço (€)" required style="flex:1;">
                     <input type="text" id="pIcon" placeholder="Emoji (ex: 🍟)" required style="width: 70px; text-align: center;">
                 </div>
-                <select id="pCategory">
-                    <option value="burgers">Burgers</option>
-                    <option value="sides">Acompanh.</option>
-                    <option value="drinks">Bebidas</option>
-                    <option value="desserts">Sobremesas</option>
-                </select>
-                <button type="submit">Inserir no Quiosque</button>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <select id="pCategory" onchange="checkCategoryTax()" style="flex: 1;">
+                        <option value="burgers">Burgers</option>
+                        <option value="sides">Acompanh.</option>
+                        <option value="drinks">Bebidas (Taxa 10% auto)</option>
+                        <option value="desserts">Sobremesas</option>
+                    </select>
+                    
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="pHasTax"> Aplicar Taxa 10%
+                    </label>
+                </div>
+                
+                <button type="submit" style="margin-top: 5px;">Inserir no Quiosque</button>
             </form>
         </div>
 
@@ -67,8 +186,9 @@
                 <thead>
                     <tr>
                         <th>Item</th>
-                        <th>Preço</th>
+                        <th>Preço Base</th>
                         <th>Cat.</th>
+                        <th>Taxa 10%</th>
                         <th>Ação</th>
                     </tr>
                 </thead>
@@ -78,22 +198,38 @@
     </div>
 
     <script>
+        // Menu inicial com a regra aplicada (Apenas bebidas entram com hasTax: true)
         const defaultMenu = [
-            { id: 1, name: 'CBO Premium', price: 6.95, icon: '🍔', category: 'burgers' },
-            { id: 2, name: 'McRoyal Cheese', price: 5.80, icon: '🍔', category: 'burgers' },
-            { id: 3, name: 'Batatas Fritas G', price: 2.80, icon: '🍟', category: 'sides' },
-            { id: 4, name: 'Coca-Cola Zero G', price: 2.30, icon: '🥤', category: 'drinks' },
-            { id: 5, name: 'McFlurry Oreo', price: 3.10, icon: '🍦', category: 'desserts' }
+            { id: 1, name: 'CBO Premium', price: 6.95, icon: '🍔', category: 'burgers', hasTax: false },
+            { id: 2, name: 'McRoyal Cheese', price: 5.80, icon: '🍔', category: 'burgers', hasTax: false },
+            { id: 3, name: 'Batatas Fritas G', price: 2.80, icon: '🍟', category: 'sides', hasTax: false },
+            { id: 4, name: 'Coca-Cola Zero G', price: 2.30, icon: '🥤', category: 'drinks', hasTax: true },
+            { id: 5, name: 'McFlurry Oreo', price: 3.10, icon: '🍦', category: 'desserts', hasTax: false }
         ];
 
         function getMenu() {
             const menu = localStorage.getItem('kiosk_menu');
-            if (!menu) { localStorage.setItem('kiosk_menu', JSON.stringify(defaultMenu)); return defaultMenu; }
+            if (!menu) {
+                localStorage.setItem('kiosk_menu', JSON.stringify(defaultMenu));
+                return defaultMenu;
+            }
             return JSON.parse(menu);
         }
 
         function getOrders() {
             return JSON.parse(localStorage.getItem('kiosk_orders') || '[]');
+        }
+
+        // Ativa a checkbox automaticamente se escolher a categoria "drinks" (Bebidas)
+        function checkCategoryTax() {
+            const category = document.getElementById('pCategory').value;
+            const taxCheckbox = document.getElementById('pHasTax');
+            if (category === 'drinks') {
+                taxCheckbox.checked = true;
+                taxCheckbox.disabled = true; // Bloqueia ativa porque bebidas têm sempre
+            } else {
+                taxCheckbox.disabled = false;
+            }
         }
 
         function renderAll() {
@@ -106,6 +242,7 @@
                     <td>${item.icon} ${item.name}</td>
                     <td>${item.price.toFixed(2)}€</td>
                     <td>${item.category}</td>
+                    <td>${item.hasTax ? '<strong>Sim (10%)</strong>' : 'Não'}</td>
                     <td><button class="delete" onclick="deleteItem(${index})">X</button></td>
                 </tr>`;
             });
@@ -114,14 +251,19 @@
             const orders = getOrders();
             const ordersContainer = document.getElementById('ordersContainer');
             ordersContainer.innerHTML = orders.length === 0 ? '<p style="color:#888;">Nenhum pedido recebido...</p>' : '';
-            
+
             // Mostrar os mais recentes primeiro
-            orders.reverse().forEach((order) => {
+            [...orders].reverse().forEach((order) => {
                 const isReady = order.status === 'Pronto';
+                
                 ordersContainer.innerHTML += `
                     <div class="order-card ${isReady ? 'ready' : ''}">
                         <div class="order-details">
-                            <div class="order-number">Pedido #${order.id} <span style="font-size:0.8rem; font-weight:normal;">(${order.time})</span></div>
+                            <div class="order-number">
+                                Pedido #${order.id} 
+                                <span style="font-size:0.8rem; font-weight:normal;">(${order.time})</span>
+                                ${order.itemsHasTax ? '<span class="tax-badge">Com Taxa</span>' : ''}
+                            </div>
                             <div class="order-items">${order.items.join(', ')}</div>
                             <strong>Total: ${order.total}</strong>
                         </div>
@@ -137,50 +279,3 @@
         document.getElementById('productForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const menu = getMenu();
-            menu.push({
-                id: Date.now(),
-                name: document.getElementById('pName').value,
-                price: parseFloat(document.getElementById('pPrice').value),
-                icon: document.getElementById('pIcon').value,
-                category: document.getElementById('pCategory').value
-            });
-            localStorage.setItem('kiosk_menu', JSON.stringify(menu));
-            localStorage.setItem('kiosk_update_trigger', Date.now());
-            renderAll();
-            this.reset();
-        });
-
-        function deleteItem(index) {
-            const menu = getMenu();
-            menu.splice(index, 1);
-            localStorage.setItem('kiosk_menu', JSON.stringify(menu));
-            localStorage.setItem('kiosk_update_trigger', Date.now());
-            renderAll();
-        }
-
-        function markAsReady(orderId) {
-            let orders = getOrders();
-            orders = orders.map(o => o.id == orderId ? { ...o, status: 'Pronto' } : o);
-            localStorage.setItem('kiosk_orders', JSON.stringify(orders));
-            localStorage.setItem('kiosk_order_trigger', Date.now()); // Avisa o quiosque
-            renderAll();
-        }
-
-        function clearHistory() {
-            let orders = getOrders();
-            orders = orders.filter(o => o.status !== 'Pronto');
-            localStorage.setItem('kiosk_orders', JSON.stringify(orders));
-            renderAll();
-        }
-
-        // Ouvir alterações vindas do Quiosque
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'kiosk_order_trigger' || e.key === 'kiosk_update_trigger') {
-                renderAll();
-            }
-        });
-
-        renderAll();
-    </script>
-</body>
-</html>
