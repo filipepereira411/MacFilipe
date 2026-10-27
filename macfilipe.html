@@ -16,9 +16,10 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
-            padding: 10px;
-            gap: 15px;
+            padding: 15px;
+            gap: 20px;
         }
+        /* Divisão dos Ecrãs */
         .half-screen {
             height: 100%;
             border-radius: 16px;
@@ -33,22 +34,18 @@
             align-items: center;
         }
         .right-kitchen {
-            flex: 1.2;
+            flex: 1.3;
             background-color: #fff;
             display: flex;
             gap: 15px;
             padding: 15px;
+            border: 1px solid #ddd;
         }
-        .kitchen-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        /* ESTILOS DO QUIOSQUE */
+
+        /* STYLES DO QUIOSQUE (ESQUERDA) */
         .kiosk-screen {
             width: 100%;
-            max-width: 440px;
+            max-width: 420px;
             height: 95%;
             background-color: #fff;
             color: #333;
@@ -63,7 +60,7 @@
         .kiosk-header {
             background-color: #264c33;
             color: #ffbc0d;
-            padding: 15px;
+            padding: 18px;
             text-align: center;
             font-weight: bold;
             font-size: 1.1rem;
@@ -74,7 +71,7 @@
             height: calc(100% - 185px);
         }
         .kiosk-sidebar {
-            width: 100px;
+            width: 110px;
             background-color: #f8f9fa;
             border-right: 1px solid #e9ecef;
             display: flex;
@@ -85,8 +82,8 @@
         .category-btn {
             background: none;
             border: none;
-            padding: 12px 5px;
-            font-size: 0.8rem;
+            padding: 15px 5px;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #6c757d;
             cursor: pointer;
@@ -100,7 +97,7 @@
             background-color: #fff;
             border-left: 4px solid #ffbc0d;
         }
-        .category-icon { font-size: 1.4rem; }
+        .category-icon { font-size: 1.5rem; }
         .products-grid {
             flex: 1;
             padding: 12px;
@@ -121,17 +118,17 @@
             flex-direction: column;
             justify-content: space-between;
             transition: transform 0.1s;
-            height: 130px;
+            height: 135px;
         }
         .product-card:active { transform: scale(0.95); background-color: #f8f9fa; }
-        .product-img { font-size: 2.4rem; margin-bottom: 3px; }
+        .product-img { font-size: 2.6rem; margin-bottom: 3px; }
         .product-name { font-size: 0.8rem; font-weight: 600; color: #333; }
-        .product-price { font-size: 0.9rem; font-weight: bold; color: #264c33; }
+        .product-price { font-size: 0.95rem; font-weight: bold; color: #264c33; }
         .cart-bar {
             height: 100px;
             background-color: #fff;
             border-top: 2px solid #e9ecef;
-            padding: 10px 15px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -140,18 +137,20 @@
             width: 100%;
         }
         .cart-info { display: flex; flex-direction: column; gap: 2px; }
-        .cart-total { font-size: 1.2rem; font-weight: bold; color: #264c33; }
-        .cart-tax-detail { font-size: 0.7rem; color: #dc3545; font-weight: 600; }
+        .cart-total { font-size: 1.3rem; font-weight: bold; color: #264c33; }
+        .cart-tax-detail { font-size: 0.75rem; color: #dc3545; font-weight: 600; }
         .checkout-btn {
             background-color: #ffbc0d;
             color: #264c33;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border-radius: 30px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 1rem;
             cursor: pointer;
         }
+        
+        /* Overlays de Checkout */
         .overlay {
             position: absolute;
             top: 0;
@@ -163,43 +162,55 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             transform: translateY(100%);
             transition: transform 0.4s ease;
             z-index: 10;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
         }
         .overlay.active { transform: translateY(0); }
         #method-overlay { background-color: #f8f9fa; color: #333; }
         #card-overlay { background-color: #264c33; }
         #mbway-overlay { background-color: #007bc4; }
+        
         .method-btn {
             background: white;
             border: 2px solid #ddd;
             width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            padding: 18px;
+            border-radius: 15px;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #264c33;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         .mbway-btn-style { border-color: #007bc4; color: #007bc4; }
-        .mbway-input { width: 80%; padding: 10px; font-size: 1.2rem; border: none; border-radius: 8px; text-align: center; color: #333; font-weight: bold; margin-top: 5px; }
-        .mbway-submit { background-color: #ffbc0d; color: #264c33; border: none; padding: 10px 25px; border-radius: 25px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 5px; }
-        .progress-bar { width: 80%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; margin-top: 10px; overflow: hidden; display: none; }
+        .mbway-input { width: 80%; padding: 12px; font-size: 1.3rem; border: none; border-radius: 8px; text-align: center; color: #333; font-weight: bold; margin-top: 10px; }
+        .mbway-submit { background-color: #ffbc0d; color: #264c33; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 10px; }
+        .progress-bar { width: 80%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; margin-top: 15px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: #fff; width: 0%; transition: width 3s linear; }
 
-        /* ESTILOS DA COZINHA */
-        h2 { color: #264c33; margin-bottom: 15px; border-bottom: 2px solid #ffbc0d; padding-bottom: 5px; }
-        .tax-badge { background: #dc3545; color: white; padding: 2px 5px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; display: inline-block; margin-left: 4px; }
-        .method-badge { background: #007bc4; color: white; padding: 2px 5px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; display: inline-block; margin-left: 4px; }
+        /* STYLES DA COZINHA (DIREITA) */
+        .kitchen-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .kitchen-orders-box {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding-right: 5px;
+        }
+        .tax-badge { background: #dc3545; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-left: 5px; }
+        .method-badge { background: #007bc4; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-left: 5px; }
         .method-badge.card { background: #28a745; }
         .order-card {
             background: #fff;
@@ -207,29 +218,45 @@
             border: 1px solid #ddd;
             border-left-width: 6px;
             border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .order-card.ready { border-left-color: #28a745; background-color: #f8fff9; }
-        .order-number { font-weight: bold; color: #264c33; font-size: 1rem; }
-        .order-items { color: #555; margin: 3px 0; font-style: italic; font-size: 0.85rem; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 8px; border: 1px solid #ddd; text-align: left; font-size: 0.8rem; }
-        th { background: #264c33; color: white; }
-        input, select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
-        button.kitchen-action { background: #ffbc0d; border: none; padding: 6px 10px; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
-        button.delete { background: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; border: none; cursor: pointer; }
-        button.ready-btn { background: #28a745; color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; font-weight: bold; }
-        button.clear-btn { background: #6c757d; color: white; width: 100%; padding: 8px; margin-top: auto; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .checkbox-container { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer; }
+        .order-number { font-weight: bold; color: #264c33; font-size: 1.1rem; }
+        .order-items { color: #555; margin: 4px 0; font-style: italic; font-size: 0.9rem; }
+        
+        .menu-management-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border-left: 1px solid #eee;
+            padding-left: 15px;
+        }
+        .table-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 0.85rem; }
+        th { background: #264c33; color: white; position: sticky; top: 0; }
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button.kitchen-btn { background: #ffbc0d; border: none; padding: 8px 12px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.1s; }
+        button.kitchen-btn:active { transform: scale(0.96); }
+        button.delete { background: #dc3545; color: white; padding: 6px 10px; }
+        button.ready-btn { background: #28a745; color: white; }
+        button.clear-btn { background: #6c757d; color: white; width: 100%; padding: 12px; font-weight: bold; cursor: pointer; border: none; border-radius: 6px; margin-top: auto; }
+        .checkbox-container { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- LADO ESQUERDO: INTERFACE DO QUIOSQUE -->
+    <!-- PAINEL DA ESQUERDA: O QUIOSQUE INTERATIVO -->
     <div class="half-screen left-kiosk">
         <div class="kiosk-screen">
             <div class="kiosk-header">🍟 MACFILIPE TOUCH 🍔</div>
@@ -237,10 +264,3 @@
                 <div class="kiosk-sidebar">
                     <button class="category-btn active" onclick="switchCategory('burgers', this)"><span class="category-icon">🍔</span><span>Burgers</span></button>
                     <button class="category-btn" onclick="switchCategory('sides', this)"><span class="category-icon">🍟</span><span>Acompanh.</span></button>
-                    <button class="category-btn" onclick="switchCategory('drinks', this)"><span class="category-icon">🥤</span><span>Bebidas</span></button>
-                    <button class="category-btn" onclick="switchCategory('desserts', this)"><span class="category-icon">🍦</span><span>Sobremesas</span></button>
-                </div>
-                <div id="burgers" class="products-grid active"></div>
-                <div id="sides" class="products-grid"></div>
-                <div id="drinks" class="products-grid"></div>
-                <div id="desserts" class="products-grid"></div>
