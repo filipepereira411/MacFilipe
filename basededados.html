@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Controlo - Base de Dados</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; color: #333; }
+        h1 { color: #264c33; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: #264c33; color: white; }
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #ffbc0d; border: none; padding: 10px 15px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        button.delete { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>Gestão do Menu (Base de Dados Local)</h1>
+    
+    <h3>Adicionar Novo Produto</h3>
+    <form id="productForm" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+        <input type="text" id="pName" placeholder="Nome do Produto" required>
+        <input type="number" id="pPrice" step="0.01" placeholder="Preço (€)" required>
+        <input type="text" id="pIcon" placeholder="Emoji (ex: 🍔)" required style="width: 80px;">
+        <select id="pCategory">
+            <option value="burgers">Burgers</option>
+            <option value="sides">Acompanh.</option>
+            <option value="drinks">Bebidas</option>
+            <option value="desserts">Sobremesas</option>
+        </select>
+        <button type="submit">Adicionar</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Emoji</th>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Categoria</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="menuTable"></tbody>
+    </table>
+
+    <script>
+        // Menu inicial padrão caso a Base de Dados esteja vazia
+        const defaultMenu = [
+            { id: 1, name: 'CBO Premium', price: 6.95, icon: '🍔', category: 'burgers' },
+            { id: 2, name: 'McRoyal Cheese', price: 5.80, icon: '🍔', category: 'burgers' },
+            { id: 3, name: 'Batatas Fritas G', price: 2.80, icon: '🍟', category: 'sides' },
+            { id: 4, name: 'Coca-Cola Zero G', price: 2.30, icon: '🥤', category: 'drinks' },
+            { id: 5, name: 'McFlurry Oreo', price: 3.10, icon: '🍦', category: 'desserts' }
+        ];
+
+        function getMenu() {
+            const menu = localStorage.getItem('kiosk_menu');
+            if (!menu) {
+                localStorage.setItem('kiosk_menu', JSON.stringify(defaultMenu));
+                return defaultMenu;
+            }
+            return JSON.parse(menu);
+        }
+
+        function saveMenu(menu) {
+            localStorage.setItem('kiosk_menu', JSON.stringify(menu));
+            // Disparar evento para atualizar o quiosque se estiver aberto noutra aba
+            localStorage.setItem('kiosk_update_trigger', Date.now());
+            renderTable();
+        }
+
+        function renderTable() {
+            const menu = getMenu();
+            const tbody = document.getElementById('menuTable');
+            tbody.innerHTML = '';
+            
+            menu.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-size: 1.5rem;">${item.icon}</td>
+                        <td>${item.name}</td>
+                        <td>${item.price.toFixed(2)} €</td>
+                        <td>${item.category}</td>
+                        <td><button class="delete" onclick="deleteItem(${index})">Remover</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const menu = getMenu();
+            menu.push({
+                id: Date.now(),
+                name: document.getElementById('pName').value,
+                price: parseFloat(document.getElementById('pPrice').value),
+                icon: document.getElementById('pIcon').value,
+                category: document.getElementById('pCategory').value
+            });
+            saveMenu(menu);
+            this.reset();
+        });
+
+        function deleteItem(index) {
+            const menu = getMenu();
+            menu.splice(index, 1);
+            saveMenu(menu);
+        }
+
+        // Renderizar ao carregar a página
+        renderTable();
+    </script>
+</body>
+</html>
