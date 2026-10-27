@@ -32,14 +32,12 @@
 </head>
 <body>
 
-    <!-- MONITOR DE PEDIDOS DA COZINHA -->
     <div class="column col-left">
         <h2>🧑‍🍳 Pedidos em Tempo Real (Cozinha)</h2>
         <div id="ordersContainer"></div>
         <button class="clear-btn" onclick="clearHistory()">Limpar Histórico de Pedidos Concluídos</button>
     </div>
 
-    <!-- GESTÃO DA BASE DE DADOS DO MENU -->
     <div class="column col-right">
         <div>
             <h2>🍔 Adicionar Produto ao Menu</h2>
@@ -196,3 +194,4 @@
         }
 
         function clearHistory() {
+            let orders = getOrders();
