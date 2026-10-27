@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Service Kiosk (Sincronizado)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; }
+        body { background-color: #1a1a1a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .kiosk-screen { width: 450px; height: 850px; background-color: #fff; color: #333; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; position: relative; overflow: hidden; border: 8px solid #2d2d2d; }
+        .header { background-color: #264c33; color: #ffbc0d; padding: 20px; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        .main-content { display: flex; flex: 1; height: calc(100% - 190px); }
+        .sidebar { width: 110px; background-color: #f8f9fa; border-right: 1px solid #e9ecef; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; }
+        .category-btn { background: none; border: none; padding: 15px 5px; font-size: 0.85rem; font-weight: 600; color: #6c757d; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .category-btn.active { color: #264c33; background-color: #fff; border-left: 4px solid #ffbc0d; }
+        .category-icon { font-size: 1.5rem; }
+        .products-grid { flex: 1; padding: 15px; grid-template-columns: repeat(2, 1fr); gap: 12px; overflow-y: auto; display: none; }
+        .products-grid.active { display: grid; }
+        .product-card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.1s; height: 140px; }
+        .product-card:active { transform: scale(0.95); background-color: #f8f9fa; }
+        .product-img { font-size: 2.8rem; margin-bottom: 5px; }
+        .product-name { font-size: 0.85rem; font-weight: 600; color: #333; }
+        .product-price { font-size: 0.95rem; font-weight: bold; color: #264c33; margin-top: 5px; }
+        .cart-bar { height: 100px; background-color: #fff; border-top: 2px solid #e9ecef; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: absolute; bottom: 0; width: 100%; }
+        .cart-info { display: flex; flex-direction: column; gap: 2px; }
+        .cart-total { font-size: 1.3rem; font-weight: bold; color: #264c33; }
+        .cart-tax-detail { font-size: 0.75rem; color: #dc3545; font-weight: 600; }
+        .checkout-btn { background-color: #ffbc0d; color: #264c33; border: none; padding: 12px 25px; border-radius: 30px; font-weight: bold; font-size: 1rem; cursor: pointer; }
+        
+        /* Modais e Ecrãs de Pagamento */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; transform: translateY(100%); transition: transform 0.4s ease; z-index: 10; padding: 30px; text-align: center; }
+        .overlay.active { transform: translateY(0); }
+        #method-overlay { background-color: #f8f9fa; color: #333; }
+        #card-overlay { background-color: #264c33; }
+        #mbway-overlay { background-color: #007bc4; }
+        
+        .method-btn { background: white; border: 2px solid #ddd; width: 100%; padding: 20px; border-radius: 15px; font-size: 1.2rem; font-weight: bold; color: #264c33; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .method-btn:active { transform: scale(0.98); }
+        .mbway-btn-style { border-color: #007bc4; color: #007bc4; }
+        .mbway-input { width: 80%; padding: 12px; font-size: 1.3rem; border: none; border-radius: 8px; text-align: center; color: #333; font-weight: bold; margin-top: 10px; }
+        .mbway-submit { background-color: #ffbc0d; color: #264c33; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 10px; }
+        
+        .progress-bar { width: 80%; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; margin-top: 15px; overflow: hidden; display: none; }
+        .progress-fill { height: 100%; background: #fff; width: 0%; transition: width 3s linear; }
+    </style>
+</head>
+<body>
+
+    <div class="kiosk-screen">
+        <div class="header">🍟 QUIOSQUE TOUCH 🍔</div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <button class="category-btn active" onclick="switchCategory('burgers', this)"><span class="category-icon">🍔</span><span>Burgers</span></button>
+                <button class="category-btn" onclick="switchCategory('sides', this)"><span class="category-icon">🍟</span><span>Acompanh.</span></button>
+                <button class="category-btn" onclick="switchCategory('drinks', this)"><span class="category-icon">🥤</span><span>Bebidas</span></button>
+                <button class="category-btn" onclick="switchCategory('desserts', this)"><span class="category-icon">🍦</span><span>Sobremesas</span></button>
+            </div>
+
+            <div id="burgers" class="products-grid active"></div>
+            <div id="sides" class="products-grid"></div>
+            <div id="drinks" class="products-grid"></div>
+            <div id="desserts" class="products-grid"></div>
+        </div>
+
+        <div class="cart-bar">
+            <div class="cart-info">
+                <div id="cart-count" style="color: #6c757d; font-size: 0.9rem;">0 artigo(s)</div>
+                <div id="cart-total" class="cart-total">0,00 €</div>
+                <div id="cart-tax-detail" class="cart-tax-detail"></div>
+            </div>
+            <button class="checkout-btn" onclick="openMethodSelection()">Finalizar ➔</button>
+        </div>
+
+        <!-- SELECIONAR MÉTODO DE PAGAMENTO -->
+        <div id="method-overlay" class="overlay">
+            <h2 style="margin-bottom: 20px; color: #264c33;">Escolha o Método de Pagamento</h2>
+            <button class="method-btn" onclick="startCardPayment()">
+                <span style="font-size: 2rem;">💳</span> Cartão Bancário
+            </button>
+            <button class="method-btn mbway-btn-style" onclick="startMBWayPayment()">
+                <span style="font-size: 2rem;">📲</span> MB WAY
+            </button>
+            <button onclick="closeAllOverlays()" style="background: none; border: 2px solid #6c757d; color: #6c757d; padding: 8px 15px; border-radius: 20px; margin-top: 30px; cursor: pointer; font-weight: bold;">Voltar ao Carrinho</button>
+        </div>
+
+        <!-- PAGAMENTO COM CARTÃO -->
+        <div id="card-overlay" class="overlay">
+            <div style="font-size: 4rem;">💳</div>
+            <h2>Aproxime o Cartão</h2>
+            <h1 class="payment-amount-display">0,00 €</h1>
+            <button onclick="backToMethods()" style="background: none; border: 2px solid white; color: white; padding: 8px 15px; border-radius: 20px; margin-top: 15px; cursor: pointer;">Voltar</button>
+        </div>
+
+        <!-- PAGAMENTO COM MB WAY -->
+        <div id="mbway-overlay" class="overlay">
+            <div style="font-size: 4rem;">📲</div>
+            <div id="mbway-form-step">
+                <h2>Introduza o nº de Telemóvel</h2>
+                <h1 class="payment-amount-display" style="margin-bottom: 10px;">0,00 €</h1>
+                <input type="tel" id="mbway-phone" class="mbway-input" placeholder="9xxxxxxxx" maxlength="9">
+                <br>
+                <button class="mbway-submit" onclick="submitMBWay()">Confirmar MB WAY</button>
+            </div>
+            <div id="mbway-wait-step" style="display: none;">
+                <h2>Consulte o seu telemóvel</h2>
+                <p style="margin-top: 10px; font-size: 0.95rem; opacity: 0.9;">Enviámos um pedido de autorização para a sua aplicação.</p>
+                <div class="progress-bar" id="mbway-bar"><div class="progress-fill" id="mbway-fill"></div></div>
+            </div>
+            <button onclick="backToMethods()" style="background: none; border: 2px solid white; color: white; padding: 8px 15px; border-radius: 20px; margin-top: 25px; cursor: pointer;">Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let baseSubtotal = 0;
+        let accumulatedTax = 0;
+        let currentPaymentMethod = '';
+        let paymentTimeout = null;
+
+        function loadMenuFromDB() {
+            const menuData = localStorage.getItem('kiosk_menu');
+            if (!menuData) return;
+            document.querySelectorAll('.products-grid').forEach(grid => grid.innerHTML = '');
+            
+            JSON.parse(menuData).forEach(product => {
+                const grid = document.getElementById(product.category);
+                if (grid) {
+                    grid.innerHTML += `
+                        <div class="product-card" onclick="addToCart('${product.name}', ${product.price}, ${product.hasTax})">
+                            <div class="product-img">${product.icon}</div>
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-price">${product.price.toFixed(2).replace('.', ',')} €</div>
+                        </div>`;
+                }
+            });
+        }
+
+        function switchCategory(categoryId, button) {
+            document.querySelectorAll('.products-grid').forEach(grid => grid.classList.remove('active'));
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(categoryId).classList.add('active');
+            button.classList.add('active');
+        }
+
+        function addToCart(name, price, hasTax) {
+
