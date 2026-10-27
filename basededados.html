@@ -2,51 +2,82 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Painel de Controlo - Base de Dados</title>
+    <title>Painel Central - Base de Dados & Pedidos</title>
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; color: #333; }
-        h1 { color: #264c33; }
-        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
-        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: #f4f6f9; padding: 20px; color: #333; display: flex; gap: 20px; }
+        .column { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .col-left { flex: 1.2; }
+        .col-right { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        h2 { color: #264c33; margin-bottom: 15px; border-bottom: 2px solid #ffbc0d; padding-bottom: 5px; }
+        
+        /* Secção de Pedidos (Estilo Cozinha/KDS) */
+        .order-card { background: #fff; border-left: 6px solid #ffbc0d; border: 1px solid #ddd; border-left-width: 6px; border-radius: 6px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .order-card.ready { border-left-color: #28a745; background-color: #f8fff9; }
+        .order-details { font-size: 0.95rem; }
+        .order-number { font-weight: bold; color: #264c33; font-size: 1.1rem; }
+        .order-items { color: #555; margin: 4px 0; font-style: italic; }
+        
+        /* Tabelas e Form */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 0.9rem; }
         th { background: #264c33; color: white; }
-        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        button { background: #ffbc0d; border: none; padding: 10px 15px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-right: 5px; }
+        button { background: #ffbc0d; border: none; padding: 8px 12px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.1s; }
+        button:active { transform: scale(0.96); }
         button.delete { background: #dc3545; color: white; }
+        button.ready-btn { background: #28a745; color: white; }
+        button.clear-btn { background: #6c757d; color: white; width: 100%; padding: 10px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <h1>Gestão do Menu (Base de Dados Local)</h1>
-    
-    <h3>Adicionar Novo Produto</h3>
-    <form id="productForm" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
-        <input type="text" id="pName" placeholder="Nome do Produto" required>
-        <input type="number" id="pPrice" step="0.01" placeholder="Preço (€)" required>
-        <input type="text" id="pIcon" placeholder="Emoji (ex: 🍔)" required style="width: 80px;">
-        <select id="pCategory">
-            <option value="burgers">Burgers</option>
-            <option value="sides">Acompanh.</option>
-            <option value="drinks">Bebidas</option>
-            <option value="desserts">Sobremesas</option>
-        </select>
-        <button type="submit">Adicionar</button>
-    </form>
+    <!-- COLUNA DA ESQUERDA: MONITOR DE PEDIDOS DA COZINHA -->
+    <div class="column col-left">
+        <h2>🧑‍🍳 Pedidos em Tempo Real (Cozinha)</h2>
+        <div id="ordersContainer">
+            <!-- Pedidos entram aqui dinamicamente -->
+        </div>
+        <button class="clear-btn" onclick="clearHistory()">Limpar Histórico de Pedidos Concluídos</button>
+    </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Emoji</th>
-                <th>Nome</th>
-                <th>Preço</th>
-                <th>Categoria</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody id="menuTable"></tbody>
-    </table>
+    <!-- COLUNA DA DIREITA: GESTÃO DO MENU -->
+    <div class="column col-right">
+        <div>
+            <h2>🍔 Adicionar Produto ao Menu</h2>
+            <form id="productForm" style="display: flex; flex-direction: column; gap: 8px;">
+                <input type="text" id="pName" placeholder="Nome do Produto" required>
+                <div style="display: flex; gap: 5px;">
+                    <input type="number" id="pPrice" step="0.01" placeholder="Preço (€)" required style="flex:1;">
+                    <input type="text" id="pIcon" placeholder="Emoji (ex: 🍟)" required style="width: 70px; text-align: center;">
+                </div>
+                <select id="pCategory">
+                    <option value="burgers">Burgers</option>
+                    <option value="sides">Acompanh.</option>
+                    <option value="drinks">Bebidas</option>
+                    <option value="desserts">Sobremesas</option>
+                </select>
+                <button type="submit">Inserir no Quiosque</button>
+            </form>
+        </div>
+
+        <div>
+            <h2>📋 Menu Atual</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Preço</th>
+                        <th>Cat.</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="menuTable"></tbody>
+            </table>
+        </div>
+    </div>
 
     <script>
-        // Menu inicial padrão caso a Base de Dados esteja vazia
         const defaultMenu = [
             { id: 1, name: 'CBO Premium', price: 6.95, icon: '🍔', category: 'burgers' },
             { id: 2, name: 'McRoyal Cheese', price: 5.80, icon: '🍔', category: 'burgers' },
@@ -57,38 +88,52 @@
 
         function getMenu() {
             const menu = localStorage.getItem('kiosk_menu');
-            if (!menu) {
-                localStorage.setItem('kiosk_menu', JSON.stringify(defaultMenu));
-                return defaultMenu;
-            }
+            if (!menu) { localStorage.setItem('kiosk_menu', JSON.stringify(defaultMenu)); return defaultMenu; }
             return JSON.parse(menu);
         }
 
-        function saveMenu(menu) {
-            localStorage.setItem('kiosk_menu', JSON.stringify(menu));
-            // Disparar evento para atualizar o quiosque se estiver aberto noutra aba
-            localStorage.setItem('kiosk_update_trigger', Date.now());
-            renderTable();
+        function getOrders() {
+            return JSON.parse(localStorage.getItem('kiosk_orders') || '[]');
         }
 
-        function renderTable() {
+        function renderAll() {
+            // Renderizar Tabela do Menu
             const menu = getMenu();
             const tbody = document.getElementById('menuTable');
             tbody.innerHTML = '';
-            
             menu.forEach((item, index) => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="font-size: 1.5rem;">${item.icon}</td>
-                        <td>${item.name}</td>
-                        <td>${item.price.toFixed(2)} €</td>
-                        <td>${item.category}</td>
-                        <td><button class="delete" onclick="deleteItem(${index})">Remover</button></td>
-                    </tr>
+                tbody.innerHTML += `<tr>
+                    <td>${item.icon} ${item.name}</td>
+                    <td>${item.price.toFixed(2)}€</td>
+                    <td>${item.category}</td>
+                    <td><button class="delete" onclick="deleteItem(${index})">X</button></td>
+                </tr>`;
+            });
+
+            // Renderizar Lista de Pedidos
+            const orders = getOrders();
+            const ordersContainer = document.getElementById('ordersContainer');
+            ordersContainer.innerHTML = orders.length === 0 ? '<p style="color:#888;">Nenhum pedido recebido...</p>' : '';
+            
+            // Mostrar os mais recentes primeiro
+            orders.reverse().forEach((order) => {
+                const isReady = order.status === 'Pronto';
+                ordersContainer.innerHTML += `
+                    <div class="order-card ${isReady ? 'ready' : ''}">
+                        <div class="order-details">
+                            <div class="order-number">Pedido #${order.id} <span style="font-size:0.8rem; font-weight:normal;">(${order.time})</span></div>
+                            <div class="order-items">${order.items.join(', ')}</div>
+                            <strong>Total: ${order.total}</strong>
+                        </div>
+                        <div>
+                            ${isReady ? '<span>✅ Pronto</span>' : `<button class="ready-btn" onclick="markAsReady('${order.id}')">Concluir</button>`}
+                        </div>
+                    </div>
                 `;
             });
         }
 
+        // Submeter novo produto
         document.getElementById('productForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const menu = getMenu();
@@ -99,18 +144,43 @@
                 icon: document.getElementById('pIcon').value,
                 category: document.getElementById('pCategory').value
             });
-            saveMenu(menu);
+            localStorage.setItem('kiosk_menu', JSON.stringify(menu));
+            localStorage.setItem('kiosk_update_trigger', Date.now());
+            renderAll();
             this.reset();
         });
 
         function deleteItem(index) {
             const menu = getMenu();
             menu.splice(index, 1);
-            saveMenu(menu);
+            localStorage.setItem('kiosk_menu', JSON.stringify(menu));
+            localStorage.setItem('kiosk_update_trigger', Date.now());
+            renderAll();
         }
 
-        // Renderizar ao carregar a página
-        renderTable();
+        function markAsReady(orderId) {
+            let orders = getOrders();
+            orders = orders.map(o => o.id == orderId ? { ...o, status: 'Pronto' } : o);
+            localStorage.setItem('kiosk_orders', JSON.stringify(orders));
+            localStorage.setItem('kiosk_order_trigger', Date.now()); // Avisa o quiosque
+            renderAll();
+        }
+
+        function clearHistory() {
+            let orders = getOrders();
+            orders = orders.filter(o => o.status !== 'Pronto');
+            localStorage.setItem('kiosk_orders', JSON.stringify(orders));
+            renderAll();
+        }
+
+        // Ouvir alterações vindas do Quiosque
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'kiosk_order_trigger' || e.key === 'kiosk_update_trigger') {
+                renderAll();
+            }
+        });
+
+        renderAll();
     </script>
 </body>
 </html>
