@@ -51,7 +51,19 @@
             display: inline-block;
             margin-left: 5px;
         }
-        /* Secção de Pedidos (Estilo Cozinha/KDS) */
+        .method-badge {
+            background: #007bc4;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        .method-badge.card {
+            background: #28a745;
+        }
         .order-card {
             background: #fff;
             border-left: 6px solid #ffbc0d;
@@ -81,7 +93,6 @@
             margin: 4px 0;
             font-style: italic;
         }
-        /* Tabelas e Form */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -135,34 +146,27 @@
             align-items: center;
             gap: 5px;
             font-size: 0.9rem;
-            margin-top: 4px;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <!-- COLUNA DA ESQUERDA: MONITOR DE PEDIDOS DA COZINHA -->
     <div class="column col-left">
         <h2>🧑‍🍳 Pedidos em Tempo Real (Cozinha)</h2>
-        <div id="ordersContainer">
-            <!-- Pedidos entram aqui dinamicamente -->
-        </div>
+        <div id="ordersContainer"></div>
         <button class="clear-btn" onclick="clearHistory()">Limpar Histórico de Pedidos Concluídos</button>
     </div>
 
-    <!-- COLUNA DA DIREITA: GESTÃO DO MENU -->
     <div class="column col-right">
         <div>
             <h2>🍔 Adicionar Produto ao Menu</h2>
             <form id="productForm" style="display: flex; flex-direction: column; gap: 8px;">
                 <input type="text" id="pName" placeholder="Nome do Produto" required>
-                
                 <div style="display: flex; gap: 5px;">
                     <input type="number" id="pPrice" step="0.01" placeholder="Preço (€)" required style="flex:1;">
                     <input type="text" id="pIcon" placeholder="Emoji (ex: 🍟)" required style="width: 70px; text-align: center;">
                 </div>
-                
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                     <select id="pCategory" onchange="checkCategoryTax()" style="flex: 1;">
                         <option value="burgers">Burgers</option>
@@ -170,12 +174,10 @@
                         <option value="drinks">Bebidas (Taxa 10% auto)</option>
                         <option value="desserts">Sobremesas</option>
                     </select>
-                    
                     <label class="checkbox-container">
                         <input type="checkbox" id="pHasTax"> Aplicar Taxa 10%
                     </label>
                 </div>
-                
                 <button type="submit" style="margin-top: 5px;">Inserir no Quiosque</button>
             </form>
         </div>
@@ -198,7 +200,6 @@
     </div>
 
     <script>
-        // Menu inicial com a regra aplicada (Apenas bebidas entram com hasTax: true)
         const defaultMenu = [
             { id: 1, name: 'CBO Premium', price: 6.95, icon: '🍔', category: 'burgers', hasTax: false },
             { id: 2, name: 'McRoyal Cheese', price: 5.80, icon: '🍔', category: 'burgers', hasTax: false },
@@ -220,20 +221,18 @@
             return JSON.parse(localStorage.getItem('kiosk_orders') || '[]');
         }
 
-        // Ativa a checkbox automaticamente se escolher a categoria "drinks" (Bebidas)
         function checkCategoryTax() {
             const category = document.getElementById('pCategory').value;
             const taxCheckbox = document.getElementById('pHasTax');
             if (category === 'drinks') {
                 taxCheckbox.checked = true;
-                taxCheckbox.disabled = true; // Bloqueia ativa porque bebidas têm sempre
+                taxCheckbox.disabled = true;
             } else {
                 taxCheckbox.disabled = false;
             }
         }
 
         function renderAll() {
-            // Renderizar Tabela do Menu
             const menu = getMenu();
             const tbody = document.getElementById('menuTable');
             tbody.innerHTML = '';
@@ -247,14 +246,13 @@
                 </tr>`;
             });
 
-            // Renderizar Lista de Pedidos
             const orders = getOrders();
             const ordersContainer = document.getElementById('ordersContainer');
             ordersContainer.innerHTML = orders.length === 0 ? '<p style="color:#888;">Nenhum pedido recebido...</p>' : '';
 
-            // Mostrar os mais recentes primeiro
             [...orders].reverse().forEach((order) => {
                 const isReady = order.status === 'Pronto';
+                const methodClass = order.method === 'Cartão' ? 'card' : '';
                 
                 ordersContainer.innerHTML += `
                     <div class="order-card ${isReady ? 'ready' : ''}">
@@ -262,7 +260,8 @@
                             <div class="order-number">
                                 Pedido #${order.id} 
                                 <span style="font-size:0.8rem; font-weight:normal;">(${order.time})</span>
-                                ${order.itemsHasTax ? '<span class="tax-badge">Com Taxa</span>' : ''}
+                                ${order.itemsHasTax ? '<span class="tax-badge">Taxa 10%</span>' : ''}
+                                <span class="method-badge ${methodClass}">${order.method || 'Pago'}</span>
                             </div>
                             <div class="order-items">${order.items.join(', ')}</div>
                             <strong>Total: ${order.total}</strong>
@@ -275,7 +274,11 @@
             });
         }
 
-        // Submeter novo produto
         document.getElementById('productForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const menu = getMenu();
+            const category = document.getElementById('pCategory').value;
+            const finalTax = (category === 'drinks') ? true : document.getElementById('pHasTax').checked;
+
+            menu.push({
+                id: Date.now(),
