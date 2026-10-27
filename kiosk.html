@@ -71,6 +71,7 @@
             <button class="checkout-btn" onclick="openMethodSelection()">Finalizar ➔</button>
         </div>
 
+        <!-- SELECIONAR MÉTODO DE PAGAMENTO -->
         <div id="method-overlay" class="overlay">
             <h2 style="margin-bottom: 20px; color: #264c33;">Escolha o Método de Pagamento</h2>
             <button class="method-btn" onclick="startCardPayment()">
@@ -82,6 +83,7 @@
             <button onclick="closeAllOverlays()" style="background: none; border: 2px solid #6c757d; color: #6c757d; padding: 8px 15px; border-radius: 20px; margin-top: 30px; cursor: pointer; font-weight: bold;">Voltar ao Carrinho</button>
         </div>
 
+        <!-- PAGAMENTO COM CARTÃO -->
         <div id="card-overlay" class="overlay">
             <div style="font-size: 4rem;">💳</div>
             <h2>Aproxime o Cartão</h2>
@@ -89,6 +91,7 @@
             <button onclick="backToMethods()" style="background: none; border: 2px solid white; color: white; padding: 8px 15px; border-radius: 20px; margin-top: 15px; cursor: pointer;">Voltar</button>
         </div>
 
+        <!-- PAGAMENTO COM MB WAY -->
         <div id="mbway-overlay" class="overlay">
             <div style="font-size: 4rem;">📲</div>
             <div id="mbway-form-step">
@@ -141,8 +144,4 @@
 
         function addToCart(name, price, hasTax) {
             cart.push(name);
-            baseSubtotal += price;
-            if (hasTax) {
-                accumulatedTax += (price * 0.10);
-            }
 
