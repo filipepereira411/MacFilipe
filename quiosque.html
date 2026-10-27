@@ -27,7 +27,6 @@
         .cart-tax-detail { font-size: 0.75rem; color: #dc3545; font-weight: 600; }
         .checkout-btn { background-color: #ffbc0d; color: #264c33; border: none; padding: 12px 25px; border-radius: 30px; font-weight: bold; font-size: 1rem; cursor: pointer; }
         
-        /* Modais e Ecrãs de Pagamento */
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; transform: translateY(100%); transition: transform 0.4s ease; z-index: 10; padding: 30px; text-align: center; }
         .overlay.active { transform: translateY(0); }
         #method-overlay { background-color: #f8f9fa; color: #333; }
@@ -72,7 +71,6 @@
             <button class="checkout-btn" onclick="openMethodSelection()">Finalizar ➔</button>
         </div>
 
-        <!-- SELECIONAR MÉTODO DE PAGAMENTO -->
         <div id="method-overlay" class="overlay">
             <h2 style="margin-bottom: 20px; color: #264c33;">Escolha o Método de Pagamento</h2>
             <button class="method-btn" onclick="startCardPayment()">
@@ -84,7 +82,6 @@
             <button onclick="closeAllOverlays()" style="background: none; border: 2px solid #6c757d; color: #6c757d; padding: 8px 15px; border-radius: 20px; margin-top: 30px; cursor: pointer; font-weight: bold;">Voltar ao Carrinho</button>
         </div>
 
-        <!-- PAGAMENTO COM CARTÃO -->
         <div id="card-overlay" class="overlay">
             <div style="font-size: 4rem;">💳</div>
             <h2>Aproxime o Cartão</h2>
@@ -92,7 +89,6 @@
             <button onclick="backToMethods()" style="background: none; border: 2px solid white; color: white; padding: 8px 15px; border-radius: 20px; margin-top: 15px; cursor: pointer;">Voltar</button>
         </div>
 
-        <!-- PAGAMENTO COM MB WAY -->
         <div id="mbway-overlay" class="overlay">
             <div style="font-size: 4rem;">📲</div>
             <div id="mbway-form-step">
@@ -144,4 +140,9 @@
         }
 
         function addToCart(name, price, hasTax) {
+            cart.push(name);
+            baseSubtotal += price;
+            if (hasTax) {
+                accumulatedTax += (price * 0.10);
+            }
 
