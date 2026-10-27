@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Central - Base de Dados & Pedidos</title>
+    <title>Painel Central - Cozinha & Base de Dados</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         body { background: #f4f6f9; padding: 20px; color: #333; display: flex; gap: 20px; }
@@ -32,12 +32,14 @@
 </head>
 <body>
 
+    <!-- MONITOR DE PEDIDOS DA COZINHA -->
     <div class="column col-left">
         <h2>🧑‍🍳 Pedidos em Tempo Real (Cozinha)</h2>
         <div id="ordersContainer"></div>
         <button class="clear-btn" onclick="clearHistory()">Limpar Histórico de Pedidos Concluídos</button>
     </div>
 
+    <!-- GESTÃO DA BASE DE DADOS DO MENU -->
     <div class="column col-right">
         <div>
             <h2>🍔 Adicionar Produto ao Menu</h2>
@@ -194,4 +196,3 @@
         }
 
         function clearHistory() {
-            let orders = getOrders();
