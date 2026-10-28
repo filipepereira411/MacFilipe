@@ -3,176 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>McDonald's - Ecrã da Cozinha</title>
+    <title>McDonald's - Gestão e Cozinha</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #111;
-            color: #fff;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #222; color: #fff; display: flex; height: 100vh; }
+        
+        /* Painel Lateral de Gestão de Produtos */
+        .admin-sidebar { width: 320px; background-color: #111; border-right: 2px solid #da291c; padding: 20px; box-sizing: border-box; }
+        .admin-sidebar h2 { color: #ffbc0d; font-size: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; margin-top: 0; }
+        .product-control { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
+        .product-info { font-weight: bold; }
+        
+        /* Botão Switch Estilo Interruptor */
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #da291c; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(24px); }
 
-        header {
-            background-color: #bd0017;
-            color: #ffbc0d;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.8em;
-        }
-
-        .painel-pedidos {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 30px;
-        }
-
-        .pedido-card {
-            background-color: #222;
-            border: 2px solid #ffbc0d;
-            border-radius: 8px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-        }
-
-        .pedido-header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #444;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-        }
-
-        .pedido-id {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #ffbc0d;
-        }
-
-        .pedido-hora {
-            color: #aaa;
-            font-size: 0.9em;
-        }
-
-        .pedido-itens {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 15px 0;
-            flex-grow: 1;
-        }
-
-        .pedido-itens li {
-            padding: 6px 0;
-            border-bottom: 1px dashed #333;
-            font-size: 1.1em;
-        }
-
-        .btn-concluir {
-            background-color: #008744;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-concluir:hover {
-            background-color: #006633;
-        }
-
-        .sem-pedidos {
-            grid-column: 1 / -1;
-            text-align: center;
-            color: #666;
-            font-size: 1.5em;
-            margin-top: 50px;
-        }
+        /* Área de Produção da Cozinha */
+        .kitchen-area { flex: 1; padding: 20px; overflow-y: auto; }
+        header { background-color: #da291c; padding: 10px; text-align: center; border-radius: 8px; margin-bottom: 15px; }
+        .status-bar { text-align: center; color: #ffbc0d; font-size: 14px; margin-bottom: 20px; font-style: italic; }
+        .kitchen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .order-card { background-color: #333; border: 2px solid #ffbc0d; border-radius: 8px; padding: 15px; }
+        .order-header { display: flex; justify-content: space-between; border-bottom: 1px solid #555; padding-bottom: 5px; margin-bottom: 10px; color: #ffbc0d; font-weight: bold; }
+        .order-items { list-style-type: none; padding: 0; margin: 0 0 15px 0; }
+        .order-items li { padding: 4px 0; border-bottom: 1px dashed #444; }
+        .done-btn { background-color: #28a745; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; }
+        .done-btn:hover { background-color: #218838; }
+        .no-orders { text-align: center; grid-column: 1 / -1; color: #aaa; }
     </style>
 </head>
 <body>
 
+<!-- PAINEL DE GESTÃO DO QUIOSQUE -->
+<div class="admin-sidebar">
+    <h2>Disponibilidade Kiosk</h2>
+    <div id="stock-controls">
+        <!-- Controlos gerados dinamicamente -->
+    </div>
+</div>
+
+<!-- ECRÃ DE PRODUÇÃO DA COZINHA -->
+<div class="kitchen-area">
     <header>
         <h1>Ecrã de Produção - Cozinha</h1>
-        <div style="font-size: 0.9em; color: #fff;">Atualização Automática Ativa</div>
     </header>
+    <div class="status-bar">🔄 Sincronização em Tempo Real Ativa</div>
 
-    <div class="painel-pedidos" id="painel-pedidos">
-        <!-- Os pedidos vão aparecer aqui via JavaScript -->
+    <div class="kitchen-grid" id="kitchen-grid">
+        <!-- Pedidos surgem aqui -->
     </div>
+</div>
 
-    <script>
-        function carregarPedidos() {
-            const painel = document.getElementById('painel-pedidos');
-            const pedidos = JSON.parse(localStorage.getItem('pedidosCozinha')) || [];
+<script>
+    // Configuração inicial padrão de produtos
+    const produtosPadrao = [
+        { id: "bigmac", nome: "Big Mac", icon: "🍔", disponivel: true },
+        { id: "mcchicken", nome: "McChicken", icon: "🍗", disponivel: true },
+        { id: "batatas", nome: "Batatas Fritas", icon: "🍟", disponivel: true },
+        { id: "sundae", nome: "Sundae Chocolate", icon: "🍦", disponivel: true }
+    ];
 
-            if (pedidos.length === 0) {
-                painel.innerHTML = '<div class="sem-pedidos">Nenhum pedido pendente de momento.</div>';
-                return;
+    // Renderiza a lista de produtos com interruptores Liga/Desliga
+    function renderizarGestaoStock() {
+        let produtos = JSON.parse(localStorage.getItem('produtosMac')) || produtosPadrao;
+        const container = document.getElementById('stock-controls');
+        container.innerHTML = '';
+
+        produtos.forEach(prod => {
+            const div = document.createElement('div');
+            div.className = 'product-control';
+            div.innerHTML = `
+                <span class="product-info">${prod.icon} ${prod.nome}</span>
+                <label class="switch">
+                    <input type="checkbox" ${prod.disponivel ? 'checked' : ''} onchange="alternarStock('${prod.id}')">
+                    <span class="slider"></span>
+                </label>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // Altera o estado do produto no localStorage e atualiza o Quiosque
+    function alternarStock(id) {
+        let produtos = JSON.parse(localStorage.getItem('produtosMac')) || produtosPadrao;
+        produtos = produtos.map(prod => {
+            if (prod.id === id) {
+                prod.disponivel = !prod.disponivel;
             }
+            return prod;
+        });
+        localStorage.setItem('produtosMac', JSON.stringify(produtos));
+        renderizarGestaoStock();
+    }
 
-            painel.innerHTML = '';
-
-            pedidos.forEach((pedido, index) => {
-                // Conta a quantidade de cada item no pedido
-                const contagemItens = {};
-                pedido.itens.forEach(item => {
-                    contagemItens[item] = (contagemItens[item] || 0) + 1;
-                });
-
-                // Cria a lista de itens em HTML
-                let listaHTML = '';
-                for (const [item, qtd] of Object.entries(contagemItens)) {
-                    listaHTML += `<li>${qtd}x ${item}</li>`;
-                }
-
-                // Estrutura do cartão do pedido
-                const card = document.createElement('div');
-                card.className = 'pedido-card';
-                card.innerHTML = `
-                    <div>
-                        <div class="pedido-header">
-                            <span class="pedido-id">PEDIDO #${pedido.id}</span>
-                            <span class="pedido-hora">${pedido.hora}</span>
-                        </div>
-                        <ul class="pedido-itens">
-                            ${listaHTML}
-                        </ul>
-                    </div>
-                    <button class="btn-concluir" onclick="concluirPedido(${index})">Concluir / Entregar</button>
-                `;
-                
-                painel.appendChild(card);
-            });
+    // Carrega os pedidos feitos no quiosque
+    function carregarPedidos() {
+        const grid = document.getElementById('kitchen-grid');
+        const pedidos = JSON.parse(localStorage.getItem('pedidosMac')) || [];
+        grid.innerHTML = '';
+        
+        if (pedidos.length === 0) {
+            grid.innerHTML = '<div class="no-orders"><h3>Nenhum pedido pendente.</h3></div>';
+            return;
         }
+        
+        pedidos.forEach((pedido, index) => {
+            const card = document.createElement('div');
+            card.className = 'order-card';
+            let itensHTML = '';
+            pedido.itens.forEach(item => { itensHTML += `<li>${item}</li>`; });
+            
+            card.innerHTML = `
+                <div class="order-header">
+                    <span>#${pedido.id}</span>
+                    <span>${pedido.hora}</span>
+                </div>
+                <ul class="order-items">${itensHTML}</ul>
+                <button class="done-btn" onclick="concluirPedido(${index})">Concluído</button>
+            `;
+            grid.appendChild(card);
+        });
+    }
 
-        function concluirPedido(index) {
-            let pedidos = JSON.parse(localStorage.getItem('pedidosCozinha')) || [];
-            // Remove o pedido selecionado da lista
-            pedidos.splice(index, 1);
-            localStorage.setItem('pedidosCozinha', JSON.stringify(pedidos));
-            // Recarrega o ecrã imediatamente
-            carregarPedidos();
-        }
+    function concluirPedido(index) {
+        let pedidos = JSON.parse(localStorage.getItem('pedidosMac')) || [];
+        pedidos.splice(index, 1);
+        localStorage.setItem('pedidosMac', JSON.stringify(pedidos));
+        carregarPedidos();
+    }
 
-        // Verifica novos pedidos a cada 1 segundo (atualização em tempo real)
-        setInterval(carregarPedidos, 1000);
+    // Atualização em loop contínuo
+    setInterval(carregarPedidos, 2000);
 
-        // Carrega os pedidos ao abrir a página
-        window.onload = carregarPedidos;
-    </script>
+    window.onload = function() {
+        renderizarGestaoStock();
+        carregarPedidos();
+    };
+</script>
+
 </body>
 </html>
+
