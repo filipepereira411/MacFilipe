@@ -5,238 +5,119 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>McDonald's - Kiosk de Pedidos</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f7f7f7;
-            color: #333;
-            padding-bottom: 100px;
-        }
-
-        header {
-            background-color: #bd0017;
-            color: #ffbc0d;
-            text-align: center;
-            padding: 20px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            letter-spacing: 1px;
-        }
-
-        header p {
-            margin: 5px 0 0 0;
-            color: #fff;
-            font-style: italic;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .product-card {
-            background-color: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease;
-            border: 1px solid #e0e0e0;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .product-image-placeholder {
-            background-color: #ffbc0d;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #bd0017;
-            font-size: 1.2em;
-        }
-
-        .product-info {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .product-info h2 {
-            margin: 0 0 10px 0;
-            font-size: 1.4em;
-            color: #bd0017;
-        }
-
-        .product-info p {
-            margin: 0 0 15px 0;
-            font-size: 0.9em;
-            color: #666;
-            line-height: 1.4;
-            height: 40px;
-        }
-
-        .btn-order {
-            display: inline-block;
-            background-color: #ffbc0d;
-            color: #bd0017;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            transition: background-color 0.2s;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-        }
-
-        .btn-order:hover {
-            background-color: #e5a80b;
-        }
-
-        /* Barra Inferior Fixa do Carrinho */
-        .cart-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #333;
-            color: #fff;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-        }
-
-        .btn-checkout {
-            background-color: #ffbc0d;
-            color: #bd0017;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1.1em;
-        }
-
-        .btn-checkout:hover {
-            background-color: #e5a80b;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; color: #333; }
+        header { background-color: #da291c; color: #ffbc0d; padding: 15px; text-align: center; border-radius: 8px; }
+        .menu-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .item-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid #ffbc0d; position: relative; }
+        .item-card.esgotado { border-left-color: #777; opacity: 0.6; }
+        .item-card h2 { margin-top: 0; color: #da291c; }
+        .item-card.esgotado h2 { color: #555; }
+        button { background-color: #ffbc0d; border: none; color: #333; padding: 10px 15px; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; }
+        button:hover { background-color: #e5a700; }
+        button:disabled { background-color: #ccc; color: #777; cursor: not-allowed; }
+        .cart-section { background: white; margin-top: 30px; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .send-btn { background-color: #da291c; color: white; margin-top: 15px; font-size: 16px; }
+        .send-btn:hover { background-color: #b81d13; }
+        .badge-esgotado { position: absolute; top: 15px; right: 15px; background: #da291c; color: white; padding: 2px 8px; font-size: 12px; font-weight: bold; border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>McDonald's Kiosk</h1>
-        <p>Faça o seu pedido aqui</p>
-    </header>
+<header>
+    <h1>McDonald's Kiosk</h1>
+    <p>Faça o seu pedido aqui</p>
+</header>
 
-    <div class="container">
-        <div class="menu-grid">
+<div class="menu-container" id="menu-container">
+    <!-- Os produtos vão ser carregados dinamicamente aqui -->
+</div>
+
+<div class="cart-section">
+    <h3>Carrinho: <span id="cart-count">0</span> itens</h3>
+    <ul id="cart-list"></ul>
+    <button class="send-btn" onclick="enviarParaCozinha()">Enviar para a Cozinha</button>
+</div>
+
+<script>
+    let carrinho = [];
+
+    // Base de dados padrão caso a cozinha ainda não tenha configurado nada
+    const produtosPadrao = [
+        { id: "bigmac", nome: "Big Mac", icon: "🍔", desc: "Dois hambúrgueres de carne de vaca, alface, queijo, pepino, cebola e o molho secreto.", disponivel: true },
+        { id: "mcchicken", nome: "McChicken", icon: "🍗", desc: "Frango panado crocante com alface picada e delicioso molho de maionese.", disponivel: true },
+        { id: "batatas", nome: "Batatas Fritas", icon: "🍟", desc: "As nossas famosas batatas fritas, douradas e estaladiças por fora.", disponivel: true },
+        { id: "sundae", nome: "Sundae Chocolate", icon: "🍦", desc: "Gelado de baunilha cremoso coberto com uma luxuosa calda quente de chocolate.", disponivel: true }
+    ];
+
+    function carregarMenu() {
+        // Tenta obter os produtos da cozinha ou usa os padrão
+        let produtos = JSON.parse(localStorage.getItem('produtosMac')) || produtosPadrao;
+        
+        // Garante que o estado inicial fica guardado se for a primeira vez
+        if(!localStorage.getItem('produtosMac')) {
+            localStorage.setItem('produtosMac', JSON.stringify(produtosPadrao));
+        }
+
+        const container = document.getElementById('menu-container');
+        container.innerHTML = '';
+
+        produtos.forEach(prod => {
+            const card = document.createElement('div');
+            card.className = `item-card ${!prod.disponivel ? 'esgotado' : ''}`;
             
-            <div class="product-card">
-                <div class="product-image-placeholder">🍔 Big Mac</div>
-                <div class="product-info">
-                    <h2>Big Mac</h2>
-                    <p>Dois hambúrgueres de carne de vaca, alface, queijo, pepino, cebola e o molho secreto.</p>
-                    <button class="btn-order" onclick="adicionarAoCarrinho('Big Mac')">Adicionar</button>
-                </div>
-            </div>
+            card.innerHTML = `
+                ${!prod.disponivel ? '<span class="badge-esgotado">Esgotado</span>' : ''}
+                <h2>${prod.icon} ${prod.nome}</h2>
+                <p>${prod.desc}</p>
+                <button ${!prod.disponivel ? 'disabled' : ''} onclick="adicionarAoCarrinho('${prod.nome}')">
+                    ${prod.disponivel ? 'Adicionar' : 'Indisponível'}
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    }
 
-            <div class="product-card">
-                <div class="product-image-placeholder">🍗 McChicken</div>
-                <div class="product-info">
-                    <h2>McChicken</h2>
-                    <p>Frango panado crocante com alface picada e delicioso molho de maionese.</p>
-                    <button class="btn-order" onclick="adicionarAoCarrinho('McChicken')">Adicionar</button>
-                </div>
-            </div>
+    function adicionarAoCarrinho(nome) {
+        carrinho.push(nome);
+        atualizarCarrinhoInterface();
+    }
 
-            <div class="product-card">
-                <div class="product-image-placeholder">🍟 Batatas Fritas</div>
-                <div class="product-info">
-                    <h2>Batatas Fritas</h2>
-                    <p>As nossas famosas batatas fritas, douradas e estaladiças por fora.</p>
-                    <button class="btn-order" onclick="adicionarAoCarrinho('Batatas Fritas')">Adicionar</button>
-                </div>
-            </div>
+    function atualizarCarrinhoInterface() {
+        document.getElementById('cart-count').innerText = carrinho.length;
+        const lista = document.getElementById('cart-list');
+        lista.innerHTML = '';
+        carrinho.forEach(item => {
+            const li = document.createElement('li');
+            li.innerText = item;
+            lista.appendChild(li);
+        });
+    }
 
-            <div class="product-card">
-                <div class="product-image-placeholder">🍦 Sundae</div>
-                <div class="product-info">
-                    <h2>Sundae Chocolate</h2>
-                    <p>Gelado de baunilha cremoso coberto com uma luxuosa calda quente de chocolate.</p>
-                    <button class="btn-order" onclick="adicionarAoCarrinho('Sundae')">Adicionar</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Barra do Carrinho -->
-    <div class="cart-bar">
-        <div>
-            <span id="cart-count">Carrinho: 0 itens</span>
-            <div id="cart-items-list" style="font-size: 0.8em; color: #ccc; margin-top: 5px;"></div>
-        </div>
-        <button class="btn-checkout" onclick="finalizarPedido()">Enviar para a Cozinha</button>
-    </div>
-
-    <script>
-        let carrinho = [];
-
-        function adicionarAoCarrinho(nomeProduto) {
-            carrinho.push(nomeProduto);
-            atualizarInterfaceCarrinho();
+    function enviarParaCozinha() {
+        if (carrinho.length === 0) {
+            alert('O seu carrinho está vazio!');
+            return;
         }
+        
+        let pedidos = JSON.parse(localStorage.getItem('pedidosMac')) || [];
+        const novoPedido = {
+            id: Math.floor(Math.random() * 900) + 100,
+            itens: [...carrinho],
+            hora: new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
+        };
+        
+        pedidos.push(novoPedido);
+        localStorage.setItem('pedidosMac', JSON.stringify(pedidos));
+        
+        alert(`Pedido #${novoPedido.id} enviado!`);
+        carrinho = [];
+        atualizarCarrinhoInterface();
+    }
 
-        function atualizarInterfaceCarrinho() {
-            document.getElementById('cart-count').innerText = `Carrinho: ${carrinho.length} item(ns)`;
-            document.getElementById('cart-items-list').innerText = carrinho.join(', ');
-        }
+    // Atualiza o menu a cada 2 segundos para o caso de a cozinha desativar um produto
+    setInterval(carregarMenu, 2000);
+    window.onload = carregarMenu;
+</script>
 
-        function finalizarPedido() {
-            if (carrinho.length === 0) {
-                alert("O seu carrinho está vazio!");
-                return;
-            }
-
-            // Cria um objeto de pedido com ID único baseado no timestamp
-            const novoPedido = {
-                id: Math.floor(Math.random() * 900) + 100, // Número de pedido simples (ex: 142)
-                itens: [...carrinho],
-                hora: new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
-            };
-
-            // Vai buscar os pedidos já existentes no localStorage ou cria uma lista vazia
-            let pedidosExistentes = JSON.parse(localStorage.getItem('pedidosCozinha')) || [];
-            pedidosExistentes.push(novoPedido);
-
-            // Grava a lista atualizada no localStorage
-            localStorage.setItem('pedidosCozinha', JSON.stringify(pedidosExistentes));
-
-            alert(`Pedido #${novoPedido.id} enviado com sucesso para a cozinha!`);
-            
-            // Limpa o carrinho
-            carrinho = [];
-            atualizarInterfaceCarrinho();
-        }
-    </script>
 </body>
 </html>
